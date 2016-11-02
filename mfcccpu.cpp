@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 #include <cstring>
 #include <cmath>
 #include <fstream>
@@ -7,7 +6,6 @@
 #include <cfloat>
 #include <stdexcept>
 #include "mfcccpu.h"
-#include "debug.h"
 
 static inline unsigned int ceil2(unsigned int v)
 {
