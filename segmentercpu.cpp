@@ -1,7 +1,6 @@
 #include <cstring>
 #include <stdexcept>
 #include "segmentercpu.h"
-#include "debug.h"
 
 static inline unsigned int ceil2(unsigned int v)
 {
@@ -26,8 +25,6 @@ void SegmenterCPU::segment_data(float * data_out, int window_count)
 			data_out[m_window_size2 * i + j] = m_window[j] * m_tmpbuffer[i * m_shift + j];
 		}
 	}
-	if (debug_mode & AFET_DEBUG_SAVE_BUFFERS)
-		export_c_buffer(data_out, m_window_size2, window_count, sizeof(float), "seg_wave.dat");
 }
 
 void SegmenterCPU::init(int window_size, int shift, int window_limit, int deltasize)
