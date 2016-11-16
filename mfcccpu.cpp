@@ -187,8 +187,6 @@ void MfccCpu::set_window(const float * window)
 void MfccCpu::fft(int window_count)
 {
 	fftwf_execute(m_fft_plan);
-	if (debug_mode & AFET_DEBUG_SAVE_BUFFERS)
-		export_c_buffer(m_fft, m_window_size2 / 2 + 1, window_count, sizeof(fftwf_complex), "fft.dat");
 }
 
 void MfccCpu::filter(int window_count)
