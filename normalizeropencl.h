@@ -19,9 +19,6 @@ private:
 	cl_kernel kernel_sum,
 		kernel_finalizeSum,
 		kernel_normalize;
-
-	template<typename Float>
-	void normalize_buffer(float * data, int window_count, bool use_last_stats);
 public:
 	NormalizerOpenCL() : d_mean(nullptr), d_var(nullptr), m_var(nullptr), d_minmax(nullptr), m_minmax(nullptr), m_norm_type(Normalizer::NORM_NONE), m_dim(0), m_using_doubles(false),
 		context(0), cmd_queue(0), program(0), kernel_sum(0), kernel_finalizeSum(0), kernel_normalize(0) {}
