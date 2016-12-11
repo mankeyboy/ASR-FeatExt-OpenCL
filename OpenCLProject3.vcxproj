@@ -182,9 +182,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="AppleFFT\fft_execute.cpp" />
     <ClCompile Include="AppleFFT\fft_kernelstring.cpp" />
     <ClCompile Include="AppleFFT\fft_setup.cpp" />
@@ -232,6 +229,9 @@
     <Intel_OpenCL_Build_Rules Include="norm.cl" />
     <Intel_OpenCL_Build_Rules Include="segmenter.cl" />
     <Intel_OpenCL_Build_Rules Include="Template.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
