@@ -233,6 +233,21 @@
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="soundfiles\a1.wav" />
+    <Media Include="soundfiles\a2.wav" />
+    <Media Include="soundfiles\a3.wav" />
+    <Media Include="soundfiles\a4.wav" />
+    <Media Include="soundfiles\a5.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="output_files\o1.txt" />
+    <Text Include="output_files\o2.txt" />
+    <Text Include="output_files\o3.txt" />
+    <Text Include="output_files\o4.txt" />
+    <Text Include="output_files\o5.txt" />
+    <Text Include="output_files\out.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\IntelOpenCL.targets" />

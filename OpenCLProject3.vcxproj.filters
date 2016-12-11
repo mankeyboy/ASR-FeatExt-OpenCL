@@ -13,6 +13,12 @@
       <UniqueIdentifier>{D011BB44-1BF7-4113-997B-A081035B40D8}</UniqueIdentifier>
       <Extensions>cl</Extensions>
     </Filter>
+    <Filter Include="Sound Files">
+      <UniqueIdentifier>{3fd67b8f-d2cb-4a96-a962-d5d854946117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output Files">
+      <UniqueIdentifier>{2490824c-bb06-4d52-9662-dee7840a0418}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utils.cpp">
@@ -151,5 +157,42 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="soundfiles\a1.wav">
+      <Filter>Sound Files</Filter>
+    </Media>
+    <Media Include="soundfiles\a2.wav">
+      <Filter>Sound Files</Filter>
+    </Media>
+    <Media Include="soundfiles\a3.wav">
+      <Filter>Sound Files</Filter>
+    </Media>
+    <Media Include="soundfiles\a4.wav">
+      <Filter>Sound Files</Filter>
+    </Media>
+    <Media Include="soundfiles\a5.wav">
+      <Filter>Sound Files</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="output_files\o1.txt">
+      <Filter>Output Files</Filter>
+    </Text>
+    <Text Include="output_files\o2.txt">
+      <Filter>Output Files</Filter>
+    </Text>
+    <Text Include="output_files\o3.txt">
+      <Filter>Output Files</Filter>
+    </Text>
+    <Text Include="output_files\o4.txt">
+      <Filter>Output Files</Filter>
+    </Text>
+    <Text Include="output_files\o5.txt">
+      <Filter>Output Files</Filter>
+    </Text>
+    <Text Include="output_files\out.txt">
+      <Filter>Output Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
