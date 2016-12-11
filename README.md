@@ -4,7 +4,6 @@ Implemented using Intel OpenCL SDK.
 
 ##### Prerequisites:  
 	libsndfile
-	<!--AppleFFT(For the OpenCL FFT. Everything needed has already been added to the repo and code. No modifications necessary)-->
 	FFTW(Pure CPU run for benchmarking an OpenCL run)
 	Intel OpenCL SDK, with 2.1 support preferable. Run in x86 mode for Intel GPU support.
 
