@@ -1,6 +1,8 @@
 __kernel void kernelTranspose(__global float2 * data_in, __global float * data_out, int width, int height, int opitch, float norm_factor)
 {
-	__local float tile[TRANSPOSE_TILE_SIZE][TRANSPOSE_TILE_SIZE + 1];
+	__constant int TRANSPOSE_TILE_SIZE = 16;
+	//__local float tile[TRANSPOSE_TILE_SIZE][TRANSPOSE_TILE_SIZE + 1];
+	__local float tile[16][16 + 1];
 	int xIndex = get_global_id(0),
 		yIndex = get_global_id(1),
 		xIndexO = get_local_size(1) * get_group_id(1) + get_local_id(0),

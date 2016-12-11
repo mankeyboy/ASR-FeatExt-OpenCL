@@ -8,7 +8,7 @@ __kernel void kernelDelta(__global float * data_in, __global float * data_out, i
 	int frame_index = get_global_id(1),
 		col = get_global_id(0),
 		idx_shift = get_global_size(1);
-
+	__constant int DELTA_TILE_SIZE = 16;
 	while (true)
 	{
 		barrier(CLK_LOCAL_MEM_FENCE);

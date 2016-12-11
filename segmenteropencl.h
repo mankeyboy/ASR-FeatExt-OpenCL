@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 #include <CL/cl.h>
-#include "stopwatchopencl.h"
+//#include "stopwatchopencl.h"
 
 class SegmenterOpenCL
 {
@@ -28,7 +28,7 @@ public:
     void cleanup();
 
     void set_window(const float * window);
-    void set_input(const short * data_in, cl_mem d_data_out, int samples, int & window_count, int & window_count_no_delta, StopWatchOpenCL * swmem = NULL, float * timemem = NULL);
+    void set_input(const short * data_in, cl_mem d_data_out, int samples, int & window_count, int & window_count_no_delta, float * timemem = NULL);
     void flush(cl_mem d_data_out, int & window_count, int & window_count_no_delta);
 
     int get_remaining_samples() const { return m_remaining_samples; }

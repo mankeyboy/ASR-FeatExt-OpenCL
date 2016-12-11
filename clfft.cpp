@@ -1,13 +1,12 @@
 #include <iostream>
 #include "clfft.h"
 
-extern bool verbose;
 
 bool clFFT::init(cl_context context, cl_command_queue cmd_queue, size_t len, size_t maxbatch)
 {
 	this->cmd_queue = cmd_queue;
 	this->len = len;
-    if (verbose)
+    if (1)
         std::cout << "Using " << "Apple" << " OpenCL FFT\n";
 		cl_int err;
 		clFFT_Dim3 dim = {len, 1, 1};

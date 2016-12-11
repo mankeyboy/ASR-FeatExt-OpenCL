@@ -3,7 +3,7 @@
 #include "openclkernelloader.h"
 #include "segmenteropencl.h"
 #include "clmemset.h"
-#include "debug.h"
+//#include "debug.h"
 
 static int MAX_BLOCK_SIZE = 256;
 
@@ -45,8 +45,8 @@ void SegmenterOpenCL::segment_data(cl_mem d_data_out, int window_count)
     //    benchmark_win += sw.stop();
     //    benchmark_cpu_win += swcpu.stop();
     //}
-    if (debug_mode & AFET_DEBUG_SAVE_BUFFERS)
-        export_cl_buffer(cmd_queue, d_data_out, m_window_size2, window_count, sizeof(float), "seg_wave.dat");
+    ///*if (debug_mode & AFET_DEBUG_SAVE_BUFFERS)
+    //*/    export_cl_buffer(cmd_queue, d_data_out, m_window_size2, window_count, sizeof(float), "seg_wave.dat");
 }
 
 void SegmenterOpenCL::init(int window_size, int shift, int window_limit, int deltasize, cl_context context, cl_command_queue cmd_queue, cl_device_id opencl_device)
@@ -117,17 +117,13 @@ void SegmenterOpenCL::set_window(const float * window)
     delete[] tmp;
 }
 
-void SegmenterOpenCL::set_input(const short * data_in, cl_mem d_data_out, int samples, int & window_count, int & window_count_no_delta, StopWatchOpenCL * swmem, float * timemem)
+void SegmenterOpenCL::set_input(const short * data_in, cl_mem d_data_out, int samples, int & window_count, int & window_count_no_delta, float * timemem)
 {
     m_last_calc_flushed = m_flushed;
     if (m_last_calc_flushed)
     {
-        if (swmem)
-            swmem->start();
-        clEnqueueWriteBuffer(cmd_queue, d_tmpbuffer, CL_FALSE, 0, samples * sizeof(short), data_in, 0, NULL, swmem ? &swmem->event : NULL);
-        if (swmem)
-            *timemem += swmem->stop();
-
+        clEnqueueWriteBuffer(cmd_queue, d_tmpbuffer, CL_FALSE, 0, samples * sizeof(short), data_in, 0, NULL, NULL);
+        
         window_count_no_delta = estimated_window_count(samples);
         window_count = window_count_no_delta - m_deltasize;
         if (window_count <= 0)
@@ -140,22 +136,14 @@ void SegmenterOpenCL::set_input(const short * data_in, cl_mem d_data_out, int sa
             throw std::runtime_error("Processed samples <= 0, this should never happen");
         m_remaining_samples = samples - processed_samples + m_window_size - m_shift;
 
-        if (swmem)
-            swmem->start();
-        clEnqueueCopyBuffer(cmd_queue, d_tmpbuffer, d_tmpbuffer, (samples - m_remaining_samples) * sizeof(short), 0, m_remaining_samples * sizeof(short), 0, NULL, swmem ? &swmem->event : NULL);
-        if (swmem)
-            *timemem += swmem->stop();
-
+        clEnqueueCopyBuffer(cmd_queue, d_tmpbuffer, d_tmpbuffer, (samples - m_remaining_samples) * sizeof(short), 0, m_remaining_samples * sizeof(short), 0, NULL, NULL);
+        
         m_flushed = false;
     }
     else
     {
-        if (swmem)
-            swmem->start();
-        clEnqueueWriteBuffer(cmd_queue, d_tmpbuffer, CL_FALSE, m_remaining_samples * sizeof(short), samples * sizeof(short), data_in, 0, NULL, swmem ? &swmem->event : NULL);
-        if (swmem)
-            *timemem += swmem->stop();
-
+        clEnqueueWriteBuffer(cmd_queue, d_tmpbuffer, CL_FALSE, m_remaining_samples * sizeof(short), samples * sizeof(short), data_in, 0, NULL,NULL);
+        
         samples += m_remaining_samples;
         window_count_no_delta = estimated_window_count(samples);
         window_count = window_count_no_delta - 2 * m_deltasize;
@@ -169,11 +157,8 @@ void SegmenterOpenCL::set_input(const short * data_in, cl_mem d_data_out, int sa
         int processed_samples = window_count * m_shift + m_window_size - m_shift;
         m_remaining_samples = samples - processed_samples + m_window_size - m_shift;
 
-        if (swmem)
-            swmem->start();
-        clEnqueueCopyBuffer(cmd_queue, d_tmpbuffer, d_tmpbuffer, (samples - m_remaining_samples) * sizeof(short), 0, m_remaining_samples * sizeof(short), 0, NULL, swmem ? &swmem->event : NULL);
-        if (swmem)
-            *timemem += swmem->stop();
+        clEnqueueCopyBuffer(cmd_queue, d_tmpbuffer, d_tmpbuffer, (samples - m_remaining_samples) * sizeof(short), 0, m_remaining_samples * sizeof(short), 0, NULL, NULL);
+        
     }
     m_samples = samples;
 }

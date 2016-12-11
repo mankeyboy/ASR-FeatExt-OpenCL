@@ -18,6 +18,8 @@
 #include "CL\cl.h"
 #include "utils.h"
 #include "segmentercpu.h"
+#include "mfcccpu.h"
+#include "mfccopencl.h"
 
 //for perf. counters
 #include <Windows.h>

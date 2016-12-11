@@ -457,7 +457,7 @@ int MfccOpenCL::set_input(const short * data, int samples)
     if (samples > m_input_buffer_size)
         throw std::runtime_error("Can't process data, buffer is too small");
     int window_count, window_count_no_delta;
-    segmenter.set_input(data, d_data, samples, window_count, window_count_no_delta, NULL, NULL);
+    segmenter.set_input(data, d_data, samples, window_count, window_count_no_delta, NULL);
     if (window_count <= 0)
         return 0;
     fft(window_count_no_delta);
