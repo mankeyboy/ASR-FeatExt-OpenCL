@@ -12,9 +12,14 @@ P.S: Benchmarking features have been planned, at least against an existing pure 
   
 ###### Task Lists:
 - [x] Code Added
+- [x] Segmenting of soundfile
+- [x] FFT using AppleFFT
+- [x] Normalise and Filterbank
+- [x] DCT
+- [x] Delta and Delta-Delta
 - [x] Soundfiles Added
 - [x] Output Files Added
-- [ ] Joining all modules
+- [ ] Joining all modules for 'End-to-End'
 - [ ] Add support Links for troubleshooting
 - [ ] Add methodology documentation
 - [ ] Add report and detailed documentation
