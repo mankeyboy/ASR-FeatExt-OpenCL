@@ -234,6 +234,9 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="a0001.wav" />
+    <Media Include="sample1.wav" />
+    <Media Include="sample1_1.wav" />
     <Media Include="soundfiles\a1.wav" />
     <Media Include="soundfiles\a2.wav" />
     <Media Include="soundfiles\a3.wav" />
