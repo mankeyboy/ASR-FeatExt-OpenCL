@@ -191,11 +191,15 @@
     <ClCompile Include="clmemset.cpp" />
     <ClCompile Include="deltacpu.cpp" />
     <ClCompile Include="deltaopencl.cpp" />
+    <ClCompile Include="main_DCT_example.cpp" />
     <ClCompile Include="mfccbase.cpp" />
     <ClCompile Include="mfcccpu.cpp" />
     <ClCompile Include="mfccopencl.cpp" />
     <ClCompile Include="normalizercpu.cpp" />
     <ClCompile Include="normalizeropencl.cpp" />
+    <ClCompile Include="oclDCT8x8_gold.cpp" />
+    <ClCompile Include="oclDCT8x8_launcher.cpp" />
+    <ClCompile Include="oclUtils.cpp" />
     <ClCompile Include="parambase.cpp" />
     <ClCompile Include="segmentercpu.cpp" />
     <ClCompile Include="segmenteropencl.cpp" />
@@ -216,6 +220,8 @@
     <ClInclude Include="normalizer.h" />
     <ClInclude Include="normalizercpu.h" />
     <ClInclude Include="normalizeropencl.h" />
+    <ClInclude Include="oclDCT8x8_common.h" />
+    <ClInclude Include="oclUtils.h" />
     <ClInclude Include="openclkernelloader.h" />
     <ClInclude Include="parambase.h" />
     <ClInclude Include="resource.h" />
@@ -224,6 +230,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <Intel_OpenCL_Build_Rules Include="DCT.cl" />
     <Intel_OpenCL_Build_Rules Include="delta.cl" />
     <Intel_OpenCL_Build_Rules Include="mfcc.cl" />
     <Intel_OpenCL_Build_Rules Include="norm.cl" />
