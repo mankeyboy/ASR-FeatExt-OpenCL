@@ -107,9 +107,9 @@ struct SConfig
 
 struct SProcessedFile
 {
-	fs::path input, output;
+	string input, output;
 	SProcessedFile() {}
-	SProcessedFile(const fs::path & input, const fs::path & output) : input(input), output(output) {}
+	SProcessedFile(const string & input, const string & output) : input(input), output(output) {}
 };
 
 void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int sample_limit, int thread_id, int num_threads)
@@ -151,8 +151,6 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 		if (norm_type != Normalizer::NORM_NONE)
 			htk_param_kind |= 004000;
 
-		StopWatch sw;
-		sw.start();
 		switch (cfg.platform)
 		{
 		case Platform_CPU:
