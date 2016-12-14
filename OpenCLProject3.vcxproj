@@ -189,6 +189,7 @@
     <ClCompile Include="benchmark.cpp" />
     <ClCompile Include="clfft.cpp" />
     <ClCompile Include="clmemset.cpp" />
+    <ClCompile Include="debug.cpp" />
     <ClCompile Include="deltacpu.cpp" />
     <ClCompile Include="deltaopencl.cpp" />
     <ClCompile Include="main_DCT_example.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="clfft.h" />
     <ClInclude Include="clmemset.h" />
+    <ClInclude Include="debug.h" />
     <ClInclude Include="deltacpu.h" />
     <ClInclude Include="deltaopencl.h" />
     <ClInclude Include="mfccbase.h" />
