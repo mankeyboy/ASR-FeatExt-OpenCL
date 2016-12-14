@@ -43,6 +43,7 @@ typedef int cl_device_id;
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
+using namespace std;
 
 bool verbose = false, use_apple_oclfft = false, use_trans_filt_combined = false;
 
@@ -105,12 +106,12 @@ struct SConfig
 	cl_device_id opencl_device;
 };
 
-struct SProcessedFile
+typedef struct SProcessedFile
 {
 	string input, output;
 	SProcessedFile() {}
 	SProcessedFile(const string & input, const string & output) : input(input), output(output) {}
-};
+}SProcessedFile;
 
 void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int sample_limit, int thread_id, int num_threads)
 {
@@ -168,23 +169,8 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			}
 			break;
 		case Platform_CUDA:
-#ifdef AFET_CUDA
-			switch (cfg.method)
-			{
-			case Method_MFCC:
-				param = new MfccCuda(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.ceps_len, cfg.want_c0, cfg.lift_coef, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn);
-				break;
-			case Method_TRAPS:
-				param = new TrapsCuda(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.traps_len, cfg.traps_dct_len, cfg.want_c0, norm_type);
-				break;
-			case Method_PLP:
-				param = new PlpCuda(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.model_order, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn);
-				break;
-			}
-#endif
 			break;
 		case Platform_OpenCL:
-#ifdef AFET_OPENCL
 			switch (cfg.method)
 			{
 			case Method_MFCC:
@@ -197,7 +183,6 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 				param = new PlpOpenCL(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.model_order, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn, cfg.opencl_device);
 				break;
 			}
-#endif
 			break;
 		default:
 			return;
