@@ -51,16 +51,13 @@ boost::mutex global_stream_lock, file_list_lock;
 
 enum Method_t
 {
-	Method_MFCC,
-	Method_TRAPS,
-	Method_PLP
+	Method_MFCC
 };
 
 enum Platform_t
 {
 	Platform_Auto,
 	Platform_CPU,
-	Platform_CUDA,
 	Platform_OpenCL
 };
 
@@ -106,12 +103,12 @@ struct SConfig
 	cl_device_id opencl_device;
 };
 
-typedef struct SProcessedFile
+struct SProcessedFile
 {
 	string input, output;
 	SProcessedFile() {}
 	SProcessedFile(const string & input, const string & output) : input(input), output(output) {}
-}SProcessedFile;
+};
 
 void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int sample_limit, int thread_id, int num_threads)
 {
@@ -500,64 +497,16 @@ void process_files_mt(const std::vector<fs::path> & input, const std::vector<fs:
 	for (int fidx = 0; fidx < input.size(); fidx++)
 		files.push_back(SProcessedFile(input[fidx], output[fidx]));
 
-	benchmark_win = 0; benchmark_cpu_win = 0;
-	benchmark_fft = 0; benchmark_cpu_fft = 0;
-	benchmark_trn = 0; benchmark_cpu_trn = 0;
-	benchmark_filt = 0; benchmark_cpu_filt = 0;
-	benchmark_dct = 0; benchmark_cpu_dct = 0;
-	benchmark_traps = 0; benchmark_cpu_traps = 0;
-	benchmark_lpc = 0; benchmark_cpu_lpc = 0;
-	benchmark_cep = 0; benchmark_cpu_cep = 0;
-	benchmark_dlt = 0; benchmark_cpu_dlt = 0;
-	benchmark_nrm = 0; benchmark_cpu_nrm = 0;
-	benchmark_mem = 0;
 
 	boost::thread_group threads;
 	for (int i = 0; i < num_threads; i++)
 		threads.add_thread(new boost::thread(process_files_worker, &files, cfg, sample_limit, i, num_threads));
 	threads.join_all();
 
-	if (benchmark)
-	{
-		std::cout << "[Benchmark] Kernel duration (CPU overhead):";
-		if (benchmark_win > 0)   std::cout << "\n[Benchmark]   segmentation:  " << benchmark_win << " (" << (benchmark_cpu_win - benchmark_win) << ")";
-		if (benchmark_fft > 0)   std::cout << "\n[Benchmark]   fft:           " << benchmark_fft << " (" << (benchmark_cpu_fft - benchmark_fft) << ")";
-		if (benchmark_trn > 0)   std::cout << "\n[Benchmark]   transposition: " << benchmark_trn << " (" << (benchmark_cpu_trn - benchmark_trn) << ")";
-		if (benchmark_filt > 0)  std::cout << "\n[Benchmark]   filter:        " << benchmark_filt << " (" << (benchmark_cpu_filt - benchmark_filt) << ")";
-		if (benchmark_dct > 0)   std::cout << "\n[Benchmark]   dct:           " << benchmark_dct << " (" << (benchmark_cpu_dct - benchmark_dct) << ")";
-		if (benchmark_traps > 0) std::cout << "\n[Benchmark]   traps:         " << benchmark_traps << " (" << (benchmark_cpu_traps - benchmark_traps) << ")";
-		if (benchmark_lpc > 0)   std::cout << "\n[Benchmark]   lpc:           " << benchmark_lpc << " (" << (benchmark_cpu_lpc - benchmark_lpc) << ")";
-		if (benchmark_cep > 0)   std::cout << "\n[Benchmark]   cepstral coef: " << benchmark_cep << " (" << (benchmark_cpu_cep - benchmark_cep) << ")";
-		if (benchmark_dlt > 0)   std::cout << "\n[Benchmark]   delta:         " << benchmark_dlt << " (" << (benchmark_cpu_dlt - benchmark_dlt) << ")";
-		if (benchmark_nrm > 0)   std::cout << "\n[Benchmark]   normalization: " << benchmark_nrm << " (" << (benchmark_cpu_nrm - benchmark_nrm) << ")";
-		std::cout << "\n[Benchmark] Memory transfers to/from device: " << benchmark_mem << std::endl;
-	}
-}
-
-void printCudaDevices(std::ostream & os = std::cout)
-{
-#ifdef AFET_CUDA
-	int dver, rver;
-	assert_cuda(cudaDriverGetVersion(&dver));
-	assert_cuda(cudaRuntimeGetVersion(&rver));
-	os << "CUDA driver version: " << dver << ", CUDA runtime version: " << rver << std::endl;
-	int count;
-	cudaDeviceProp prop;
-	if (cudaGetDeviceCount(&count) == cudaSuccess)
-	{
-		os << "Available CUDA devices:\n";
-		for (int i = 0; i < count; i++)
-		{
-			assert_cuda(cudaGetDeviceProperties(&prop, i));
-			os << "  Device " << i << ": " << prop.name << "\t [Compute capability " << prop.major << "." << prop.minor << "]\n";
-		}
-	}
-#endif
 }
 
 void printOpenCLDevices(std::ostream & os = std::cout)
 {
-#ifdef AFET_OPENCL
 	const size_t BUFFSIZE = 128;
 
 	cl_platform_id * platform_ids = NULL;
@@ -575,9 +524,7 @@ void printOpenCLDevices(std::ostream & os = std::cout)
 	os << "Available OpenCL platforms and devices:\n";
 	for (int i = 0; i < nplatforms; i++)
 	{
-		char vendor[BUFFSIZE],
-			name[BUFFSIZE],
-			version[BUFFSIZE];
+		char vendor[BUFFSIZE], name[BUFFSIZE], version[BUFFSIZE];
 		err |= clGetPlatformInfo(platform_ids[i], CL_PLATFORM_VENDOR, BUFFSIZE, vendor, NULL);
 		err |= clGetPlatformInfo(platform_ids[i], CL_PLATFORM_NAME, BUFFSIZE, name, NULL);
 		err |= clGetPlatformInfo(platform_ids[i], CL_PLATFORM_VERSION, BUFFSIZE, version, NULL);
@@ -609,7 +556,6 @@ printOpenCLDevices_error:
 		free(platform_ids);
 	if (device_ids)
 		free(device_ids);
-#endif
 }
 
 void help(const po::options_description & desc, std::ostream & os = std::cout)
@@ -743,116 +689,13 @@ std::istream & operator >> (std::istream & is, SVTLNAlpha & alpha)
 	return is;
 }
 
-void checkhtkarg(const std::string & arg, const std::string & param, const std::string & val)
-{
-	if (!boost::iequals(param, val))
-		throw std::runtime_error("Uncompatible HTK parameter value: " + arg);
-}
-
-void readhtkconfig(const std::string & filename, SConfig & cfg)
-{
-	bool use_power = false;
-
-	std::ifstream fin(filename.c_str());
-	std::string line;
-	while (std::getline(fin, line))
-	{
-		size_t eqpos = line.find('=');
-		if (eqpos == std::string::npos)
-			continue;
-		std::string arg = line.substr(0, eqpos),
-			param = line.substr(eqpos + 1);
-		boost::algorithm::trim(arg);
-		boost::algorithm::trim(param);
-		if (boost::iequals(arg, "SOURCEFORMAT"))
-			checkhtkarg("SOURCEFORMAT", param, "WAV");
-		else if (boost::iequals(arg, "SOURCEKIND"))
-			checkhtkarg("SOURCEKIND", param, "WAVEWORM");
-		else if (boost::iequals(arg, "ZMEANSOURCE"))
-			checkhtkarg("ZMEANSOURCE", param, "FALSE");
-		else if (boost::iequals(arg, "TARGETFORMAT"))
-			checkhtkarg("TARGETFORMAT", param, "HTK");
-		else if (boost::iequals(arg, "TARGETKIND"))
-		{
-			if (param.find("MFCC") == 0)
-				cfg.method = Method_MFCC;
-			else if (param.find("PLP") == 0)
-				cfg.method = Method_PLP;
-			else
-				throw std::runtime_error("Uncompatible HTK target kind");
-			cfg.want_c0 = param.find("_0") != std::string::npos;
-			if (param.find("_A") != std::string::npos)
-			{
-				if (param.find("_D") == std::string::npos)
-					throw std::runtime_error("Uncompatible HTK target kind: acceleration coefficients without delta");
-				cfg.dyn_type = 2;
-			}
-			else if (param.find("_D") != std::string::npos)
-				cfg.dyn_type = 1;
-			else
-				cfg.dyn_type = 0;
-			cfg.norm_type = param.find("_Z") != std::string::npos ? 1 : 0;
-			if (param.find("_A") != std::string::npos
-				|| param.find("_C") != std::string::npos
-				|| param.find("_E") != std::string::npos
-				|| param.find("_K") != std::string::npos
-				|| param.find("_N") != std::string::npos
-				|| param.find("_T") != std::string::npos
-				|| param.find("_V") != std::string::npos)
-				throw std::runtime_error("Uncompatible HTK target kind: only supported qualifiers are _Z _0 _D _A");
-		}
-		else if (boost::iequals(arg, "SAVECOMPRESSED"))
-			checkhtkarg("SAVECOMPRESSED", param, "FALSE");
-		else if (boost::iequals(arg, "USEHAMMING"))
-			checkhtkarg("USEHAMMING", param, "TRUE");
-		else if (boost::iequals(arg, "NUMCHANS"))
-			cfg.num_banks = atoi(param.c_str());
-		else if (boost::iequals(arg, "NUMCEPS"))
-			cfg.ceps_len = atoi(param.c_str());
-		else if (boost::iequals(arg, "CEPLIFTER"))
-			cfg.lift_coef = atof(param.c_str());
-		else if (boost::iequals(arg, "DELTAWINDOW"))
-			cfg.delta_l1 = atoi(param.c_str());
-		else if (boost::iequals(arg, "ACCWINDOW"))
-			cfg.delta_l2 = atoi(param.c_str());
-		else if (boost::iequals(arg, "SOURCERATE"))
-			cfg.sample_rate = 1e7 / atof(param.c_str());
-		else if (boost::iequals(arg, "TARGETRATE"))
-			cfg.shift = atof(param.c_str()) * 1e-4;
-		else if (boost::iequals(arg, "WINDOWSIZE"))
-			cfg.window_size = atof(param.c_str()) * 1e-4;
-		else if (boost::iequals(arg, "USEPOWER"))
-			use_power = boost::iequals(param, "TRUE");
-		else if (boost::iequals(arg, "LOFREQ"))
-			cfg.low_freq = atof(param.c_str());
-		else if (boost::iequals(arg, "HIFREQ"))
-			cfg.high_freq = atof(param.c_str());
-		else
-			std::cout << "Warning: ignoring parameter " << arg.c_str();
-	}
-	fin.close();
-	if (cfg.method == Method_MFCC && use_power != false
-		|| cfg.method == Method_PLP && use_power != true)
-		throw std::runtime_error("Uncompatible combination of TARGETKIND and USEPOWER");
-	if (cfg.low_freq < 0)
-		cfg.low_freq = 0;
-	if (cfg.high_freq < 0)
-		cfg.high_freq = cfg.sample_rate * 0.5;
-}
-
 int main(int argc, char * argv[])
 {
 	SConfig cfg = { Method_MFCC, Platform_Auto, SVTLNAlpha(1), 25, 10, 15, 12, 2, 0, 3, 3, 31, 10, 8, 0, 64, 0, 22, true, true, false, 0 };
 	SDevice device_spec;
 	int sample_limit = 10000000,
 		num_threads = 1;
-	std::string input_dir_arg,
-		output_dir_arg,
-		wav_file,
-		scp_file,
-		output_ext("htk"),
-		config_file,
-		htk_config_file;
+	std::string input_dir_arg, output_dir_arg, wav_file, scp_file, output_ext("txt"), config_file, htk_config_file;
 	benchmark = false;
 	debug_mode = 0;
 
