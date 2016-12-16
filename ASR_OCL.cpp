@@ -41,13 +41,13 @@ typedef int cl_device_id;
 #undef max
 #endif
 
-namespace po = boost::program_options;
-namespace fs = boost::filesystem;
+//namespace po = boost::program_options;
+//namespace fs = boost::filesystem;
 using namespace std;
 
 bool verbose = false, use_apple_oclfft = false, use_trans_filt_combined = false;
 
-boost::mutex global_stream_lock, file_list_lock;
+//boost::mutex global_stream_lock, file_list_lock;
 
 enum Method_t
 {
@@ -133,13 +133,6 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 		case 2: dyn_type = ParamBase::DYN_ACC; break;
 		}
 
-		int htk_param_kind;
-		switch (cfg.method)
-		{
-		case Method_MFCC: htk_param_kind = 6; break;
-		case Method_PLP: htk_param_kind = 11; break;
-		default: htk_param_kind = 9;
-		}
 		if (dyn_type == ParamBase::DYN_DELTA)
 			htk_param_kind |= 000400;
 		else if (dyn_type == ParamBase::DYN_ACC)
@@ -191,14 +184,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			window[i] = (0.56f - 0.46f * cos((2.0f * M_PI * i) / window_size)) / 32768.f;
 		param->set_window(window);
 		delete[] window;
-		sw.stop();
-		if (benchmark)
-		{
-			global_stream_lock.lock();
-			std::cout << "[Benchmark] Parameterizer init time: " << sw.getTime() << " s\n";
-			global_stream_lock.unlock();
-		}
-		sw.reset();
+		
 
 		int samples_in_limit = param->get_input_buffer_size();
 		int windows_out_limit = param->estimated_window_count(samples_in_limit);
@@ -222,54 +208,28 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			const fs::path & file_in = file.input,
 				&file_out = file.output;
 			std::string input_file_name = file_in.generic_string();
-			global_stream_lock.lock();
-			std::cout << "Processing \"" << input_file_name << "\"\n";
-			global_stream_lock.unlock();
 			SF_INFO info;
 			info.format = 0;
 			SNDFILE * f = NULL;
-#ifdef _WIN32
+
 			f = sf_open(input_file_name.c_str(), SFM_READ, &info);
-#else
-			int fd = open(input_file_name.c_str(), O_RDONLY);
-			if (fd >= 0)
-			{
-				if (!(debug_mode & AFET_DEBUG_NOFADVISE))
-				{
-					int ret = posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-					ret |= posix_fadvise(fd, 0, 0, POSIX_FADV_NOREUSE);
-					if (ret)
-					{
-						global_stream_lock.lock();
-						std::cout << "Warning: posix_fadvise failed";
-						global_stream_lock.unlock();
-					}
-				}
-				f = sf_open_fd(fd, SFM_READ, &info, 1);
-			}
-#endif
+
 			if (f == NULL)
 			{
-				global_stream_lock.lock();
 				std::cerr << "Can't open \"" << input_file_name << "\"\n";
-				global_stream_lock.unlock();
 				continue;
 			}
 			sf_command(f, SFC_SET_NORM_FLOAT, NULL, SF_FALSE);
 			if (info.frames < 1)
 			{
 				sf_close(f);
-				global_stream_lock.lock();
 				std::cerr << "Error while loading \"" << input_file_name << "\"\n";
-				global_stream_lock.unlock();
 				continue;
 			}
 			if (info.samplerate != cfg.sample_rate)
 			{
 				sf_close(f);
-				global_stream_lock.lock();
 				std::cerr << "File \"" << input_file_name << "\" has incorrect sample rate (" << info.samplerate << "), aborting program.\n";
-				global_stream_lock.unlock();
 				break;
 			}
 
@@ -283,11 +243,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					file_out_name = file_out;  //only 1 alpha
 				else
 					file_out_name = file_out.parent_path() / fs::path(file_out.stem().string() + "-" + std::to_string(alpha) + file_out.extension().string());
-				if (verbose)
-				{
-					global_stream_lock.lock();
-					std::cout << "Creating output file: " << file_out_name.string() << std::endl;
-					global_stream_lock.unlock();
+				std::cout << "Creating output file: " << file_out_name.string() << std::endl;
 				}
 				FILE * fout = NULL;
 				if (!(debug_mode & AFET_DEBUG_NOOUTPUT))
@@ -295,23 +251,6 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					fout = fopen(file_out_name.string().c_str(), cfg.text_output ? "w" : "wb");
 					if (fout == NULL)
 						throw std::runtime_error("Can't create output file: " + file_out_name.string());
-#ifndef _WIN32
-					if (!(debug_mode & AFET_DEBUG_NOFADVISE))
-					{
-						int fd = fileno(fout);
-						if (fd > 0)
-						{
-							int ret = posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-							ret |= posix_fadvise(fd, 0, 0, POSIX_FADV_NOREUSE);
-							if (ret)
-							{
-								global_stream_lock.lock();
-								std::cout << "Warning: posix_fadvise failed";
-								global_stream_lock.unlock();
-							}
-						}
-					}
-#endif
 					if (!cfg.text_output)
 						write_htk_header(fout, 0, 0, 0, 0); //Dummy header for correct data offset
 				}
