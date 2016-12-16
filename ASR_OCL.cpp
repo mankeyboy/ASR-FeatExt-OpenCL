@@ -349,9 +349,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					param->get_output_data((float *)data, windows_out);
 					if (verbose)
 					{
-						global_stream_lock.lock();
 						std::cout << "\tBlock " << block++ << ": " << samples_in << " samples, " << windows_out << " frames, alpha = " << alpha << std::endl;
-						global_stream_lock.unlock();
 					}
 
 					if (!(debug_mode & AFET_DEBUG_NOOUTPUT))
@@ -423,9 +421,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			}
 			else if (verbose)
 			{
-				global_stream_lock.lock();
 				std::cout << "\tNothing to flush\n";
-				global_stream_lock.unlock();
 			}
 			if (verbose)
 			{
