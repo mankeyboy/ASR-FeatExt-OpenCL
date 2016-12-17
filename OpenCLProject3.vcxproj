@@ -229,6 +229,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="segmentercpu.h" />
     <ClInclude Include="segmenteropencl.h" />
+    <ClInclude Include="shrQATest.h" />
+    <ClInclude Include="shrUtils.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
