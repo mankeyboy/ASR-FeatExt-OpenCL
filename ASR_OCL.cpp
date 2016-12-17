@@ -327,13 +327,13 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 	{
 		delete[](char *)data;
 		delete param;
-		std::cerr << "Exception caught in thread " << thread_id << ": " << e.what() << "\nTerminating the thread " << thread_id << std::endl;
+		std::cerr << "Exception caught "<<e.what() << "\n" << std::endl;
 	}
 	catch (...)
 	{
 		delete[](char *)data;
 		delete param;
-		std::cerr << "Unknown exception caught in thread " << thread_id << "\nTerminating the thread " << thread_id << std::endl;
+		std::cerr << "Unknown exception caught "<< std::endl;
 	}
 }
 
@@ -363,8 +363,7 @@ void process_files_mt(const std::vector<string> & input, const std::vector<strin
 		files.push_back(SProcessedFile(input[fidx], output[fidx]));
 
 	for (int i = 0; i < num_threads; i++)
-		threads.add_thread(new boost::thread(process_files_worker, &files, cfg, sample_limit, i, num_threads));
-	threads.join_all();
+		process_files_worker( &files, cfg, sample_limit);
 
 }
 
@@ -532,7 +531,7 @@ std::istream & operator >> (std::istream & is, SVTLNAlpha & alpha)
 
 int main(int argc, char * argv[])
 {
-	SConfig cfg = { Method_MFCC, Platform_Auto, SVTLNAlpha(1), 25, 10, 15, 12, 2, 0, 3, 3, 31, 10, 8, 0, 64, 0, 22, true, true, false, 0 };
+	SConfig cfg = { Method_MFCC, Platform_Auto, SVTLNAlpha(1), 25, 10, 15, 12, 2, 0, 3, 3, 31, 10, 8, 0, 64, 0, 22, true, true, true, 0 };
 	SDevice device_spec;
 	int sample_limit = 10000000,
 		num_threads = 1;
