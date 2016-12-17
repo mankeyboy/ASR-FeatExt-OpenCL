@@ -106,7 +106,7 @@ struct SProcessedFile
 	SProcessedFile(const string & input, const string & output) : input(input), output(output) {}
 };
 
-void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int sample_limit, int thread_id, int num_threads)
+void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int sample_limit)
 {
 	ParamBase * param = NULL;
 	void * data = NULL;
@@ -517,7 +517,7 @@ std::istream & operator >> (std::istream & is, SVTLNAlpha & alpha)
 {
 	std::string token;
 	is >> token;
-	boost::smatch sm;
+	/*boost::smatch sm;
 	boost::regex e("([^:]+):([^:]+):([^:]+)");
 	if (boost::regex_match(token, sm, e))
 	{
@@ -525,7 +525,7 @@ std::istream & operator >> (std::istream & is, SVTLNAlpha & alpha)
 		alpha.step = atof(sm.str(2).c_str());
 		alpha.max = atof(sm.str(3).c_str());
 	}
-	else
+	else*/
 		alpha = SVTLNAlpha(atof(token.c_str()));
 	return is;
 }
@@ -536,10 +536,10 @@ int main(int argc, char * argv[])
 	SDevice device_spec;
 	int sample_limit = 10000000,
 		num_threads = 1;
-	std::string input_dir_arg, output_dir_arg, wav_file, scp_file, output_ext("txt"), config_file, htk_config_file;
+	std::string input_dir_arg, output_dir_arg, wav_file, scp_file, output_ext("txt"), config_file;
 	benchmark = false;
 	debug_mode = 0;
-
+/*
 	po::options_description prog_desc("Program options");
 	prog_desc.add_options()
 		("help,h", "Print help and exit")
@@ -639,7 +639,7 @@ int main(int argc, char * argv[])
 		std::cerr << "Options \"wav-file\" and \"scp\" are mutually exclusive.\n";
 		return 1;
 	}
-
+*/
 	try
 	{
 		if (cfg.platform == Platform_Auto)
