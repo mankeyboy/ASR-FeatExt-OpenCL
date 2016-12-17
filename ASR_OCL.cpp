@@ -34,7 +34,7 @@
 #include "mfcccpu.h"
 #include "mfccopencl.h"
 
-typedef int cl_device_id;
+//typedef int cl_device_id;
 
 #ifdef min
 #undef min
@@ -202,7 +202,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					file_out_name = file_out;  //only 1 alpha
 				else
 				{
-					string file_temp_name = file_out.substr(file_out.begin, file_out.length() - 4), temp_ext = file_out.substr(file_out.end - 4, 4);
+					string file_temp_name = file_out.substr(0, file_out.length() - 4), temp_ext = file_out.substr(file_out.length() -1 - 4, 4);
 					file_out_name = file_temp_name + to_string(alpha) + temp_ext;
 				}
 				std::cout << "Creating output file: " << file_out_name << std::endl;
@@ -699,7 +699,7 @@ int main(int argc, char * argv[])
 		if (wav_file.find('/'))
 		{
 			input.push_back(wav_file);
-			output.push_back(wav_file.substr(wav_file.begin, wav_file.length() - 4) + "_mfcc.txt");
+			output.push_back(wav_file.substr(0, wav_file.length() - 4) + "_mfcc.txt");
 		}
 		
 		process_files_mt(input, output, cfg, sample_limit, num_threads);
