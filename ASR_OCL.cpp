@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cstring>
 #include <string>
+#include <list>
 
 #include "CL\cl.h"
 #include "utils.h"
@@ -81,8 +82,7 @@ struct SConfig
 	Method_t method;
 	Platform_t platform;
 	SVTLNAlpha alpha;
-	float window_size,
-		shift;
+	float window_size, shift;
 	int num_banks,
 		ceps_len,
 		norm_type,
@@ -92,13 +92,8 @@ struct SConfig
 		traps_len,
 		traps_dct_len,
 		model_order;
-	float sample_rate,
-		low_freq,
-		high_freq,
-		lift_coef;
-	bool want_c0,
-		norm_after_dyn,
-		text_output;
+	float sample_rate, low_freq, high_freq, lift_coef;
+	bool want_c0, norm_after_dyn, text_output;
 	//OpenCL config
 	cl_device_id opencl_device;
 };
@@ -133,47 +128,18 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 		case 2: dyn_type = ParamBase::DYN_ACC; break;
 		}
 
-		if (dyn_type == ParamBase::DYN_DELTA)
-			htk_param_kind |= 000400;
-		else if (dyn_type == ParamBase::DYN_ACC)
-			htk_param_kind |= 000400 | 001000;
-		if (cfg.method == Method_PLP || cfg.want_c0)
-			htk_param_kind |= 020000;
-		if (norm_type != Normalizer::NORM_NONE)
-			htk_param_kind |= 004000;
-
 		switch (cfg.platform)
 		{
 		case Platform_CPU:
-			switch (cfg.method)
-			{
-			case Method_MFCC:
-				param = new MfccCpu(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.ceps_len, cfg.want_c0, cfg.lift_coef, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn);
-				break;
-			case Method_TRAPS:
-				param = new TrapsCpu(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.traps_len, cfg.traps_dct_len, cfg.want_c0, norm_type);
-				break;
-			case Method_PLP:
-				param = new PlpCpu(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.model_order, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn);
-				break;
-			}
+		{
+			param = new MfccCpu(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.ceps_len, cfg.want_c0, cfg.lift_coef, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn);
 			break;
-		case Platform_CUDA:
-			break;
+		}
 		case Platform_OpenCL:
-			switch (cfg.method)
-			{
-			case Method_MFCC:
-				param = new MfccOpenCL(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.ceps_len, cfg.want_c0, cfg.lift_coef, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn, cfg.opencl_device);
-				break;
-			case Method_TRAPS:
-				param = new TrapsOpenCL(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.traps_len, cfg.traps_dct_len, cfg.want_c0, norm_type, cfg.opencl_device);
-				break;
-			case Method_PLP:
-				param = new PlpOpenCL(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.model_order, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn, cfg.opencl_device);
-				break;
-			}
+		{
+			param = new MfccOpenCL(sample_limit, window_size, shift, cfg.num_banks, cfg.sample_rate, cfg.low_freq, cfg.high_freq, cfg.ceps_len, cfg.want_c0, cfg.lift_coef, norm_type, dyn_type, cfg.delta_l1, cfg.delta_l2, cfg.norm_after_dyn, cfg.opencl_device);
 			break;
+		}
 		default:
 			return;
 		}
@@ -195,16 +161,9 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 
 		while (true)
 		{
-			file_list_lock.lock();
-			if (files->empty())
-			{
-				file_list_lock.unlock();
-				break;
-			}
 			SProcessedFile file = files->front();
 			files->pop_front();
-			file_list_lock.unlock();
-
+			
 			const fs::path & file_in = file.input,
 				&file_out = file.output;
 			std::string input_file_name = file_in.generic_string();
