@@ -432,12 +432,8 @@ std::istream & operator >> (std::istream & is, Method_t & method)
 {
 	std::string token;
 	is >> token;
-	if (boost::iequals(token, "mfcc"))
+	if (!(token.compare("mfcc")))
 		method = Method_MFCC;
-	else if (boost::iequals(token, "traps"))
-		method = Method_TRAPS;
-	else if (boost::iequals(token, "plp"))
-		method = Method_PLP;
 	return is;
 }
 
@@ -445,13 +441,11 @@ std::istream & operator >> (std::istream & is, Platform_t & platform)
 {
 	std::string token;
 	is >> token;
-	if (boost::iequals(token, "auto"))
+	if (token.compare("auto"))
 		platform = Platform_Auto;
-	else if (boost::iequals(token, "cpu"))
+	else if (token.compare("cpu"))
 		platform = Platform_CPU;
-	else if (boost::iequals(token, "cuda"))
-		platform = Platform_CUDA;
-	else if (boost::iequals(token, "opencl"))
+	else if (token.compare("opencl"))
 		platform = Platform_OpenCL;
 	else
 		throw std::runtime_error("Unknown platform");
@@ -460,7 +454,6 @@ std::istream & operator >> (std::istream & is, Platform_t & platform)
 
 int str2clDeviceType(const std::string & t)
 {
-#ifdef AFET_OPENCL
 	if (boost::iequals(t, "default"))
 		return CL_DEVICE_TYPE_DEFAULT;
 	else if (boost::iequals(t, "cpu"))
