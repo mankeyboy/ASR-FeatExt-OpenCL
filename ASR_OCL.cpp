@@ -200,13 +200,15 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 				if (cfg.alpha.max - cfg.alpha.min < cfg.alpha.step)
 					file_out_name = file_out;  //only 1 alpha
 				else
-					file_out_name = file_out.parent_path() / fs::path(file_out.stem().string() + "-" + std::to_string(alpha) + file_out.extension().string());
-				std::cout << "Creating output file: " << file_out_name.string() << std::endl;
-				}
-				FILE * fout = NULL;
-				if (!(debug_mode & AFET_DEBUG_NOOUTPUT))
 				{
-					fout = fopen(file_out_name.string().c_str(), cfg.text_output ? "w" : "wb");
+					string file_temp_name = file_out.substr(file_out.begin, file_out.length() - 4), temp_ext = file_out.substr(file_out.end - 4, 4);
+					file_out_name = file_temp_name + to_string(alpha) + temp_ext;
+				}
+				std::cout << "Creating output file: " << file_out_name << std::endl;
+				FILE * fout = NULL;
+				if (!(debug_mode))
+				{
+					fout = fopen(file_out_name.c_str(), cfg.text_output ? "w" : "wb");
 					if (fout == NULL)
 						throw std::runtime_error("Can't create output file: " + file_out_name.string());
 				}
@@ -224,14 +226,10 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			while (samples > 0)
 			{
 				int samples_in = std::min<size_t>(samples, samples_in_limit);
-				if (benchmark)
-					sw.start();
-				if (!(debug_mode & AFET_DEBUG_NOINPUT))
+				if (!(debug_mode))
 					sf_readf_short(f, (short *)data, samples_in);
 				//sf_readf_float(f, data, samples_in);
-				if (benchmark)
-					sw.stop();
-
+			
 				windows_out = param->set_input((const short *)data, samples_in);
 				windows_total_in += windows_out;
 				for (fidx = 0; fidx < vecfout.size(); fidx++)
@@ -247,11 +245,9 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 						std::cout << "\tBlock " << block++ << ": " << samples_in << " samples, " << windows_out << " frames, alpha = " << alpha << std::endl;
 					}
 
-					if (!(debug_mode & AFET_DEBUG_NOOUTPUT))
+					if (!(debug_mode))
 					{
 						FILE * fout = vecfout[fidx];
-						if (benchmark)
-							sw.start();
 						if (cfg.text_output)
 						{
 							for (int f = 0; f < windows_out; f++)
