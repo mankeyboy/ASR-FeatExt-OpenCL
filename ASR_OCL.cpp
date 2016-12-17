@@ -420,24 +420,12 @@ printOpenCLDevices_error:
 		free(device_ids);
 }
 
-void help(const po::options_description & desc, std::ostream & os = std::cout)
+void help(std::ostream & os = std::cout)
 {
-	os << "Usage:\n  afet.exe [options] ([--wav-file] | --scp) file\n" << desc << std::endl;
+	os << "Usage:\n  afet.exe [options] ([--wav-file] | --scp) file\n" << std::endl;
 	os << "Afet was compiled with support for: CPU"
-#ifdef AFET_CUDA
-		", CUDA"
-#endif
-#ifdef AFET_OPENCL
-		", OpenCL"
-#endif
-		<< "\n\n";
-#ifdef AFET_CUDA
-	printCudaDevices(os);
-	os << std::endl;
-#endif
-#ifdef AFET_OPENCL
+	   <<", OpenCL"<< "\n\n";
 	printOpenCLDevices(os);
-#endif
 }
 
 std::istream & operator >> (std::istream & is, Method_t & method)
@@ -642,8 +630,6 @@ int main(int argc, char * argv[])
 		return 0;
 	}
 
-	if (vm.count("benchmark"))
-		benchmark = true;
 	if (vm.count("verbose"))
 		verbose = true;
 	if (vm.count("applefft"))
@@ -651,8 +637,6 @@ int main(int argc, char * argv[])
 	if (vm.count("transfilt"))
 		use_trans_filt_combined = true;
 
-	if (!htk_config_file.empty())
-		readhtkconfig(htk_config_file, cfg);
 	if (!vm.count("wav-file") && !vm.count("scp"))
 	{
 		std::cerr << "Error: Missing file name.\n";
@@ -669,42 +653,12 @@ int main(int argc, char * argv[])
 	{
 		if (cfg.platform == Platform_Auto)
 		{
-#ifdef AFET_CUDA
-			int cnt = 0;
-			if (cudaGetDeviceCount(&cnt) == cudaSuccess && cnt > 0)
-				cfg.platform = Platform_CUDA;
-			else
-#ifdef AFET_OPENCL
-				cfg.platform = Platform_OpenCL;
-#else
-				cfg.platform = Platform_CPU;
-#endif
-#else
-#ifdef AFET_OPENCL
 			cfg.platform = Platform_OpenCL;
-#else
-			cfg.platform = Platform_CPU;
-#endif
-#endif
 		}
 		switch (cfg.platform)
 		{
-		case Platform_CUDA:
-		{
-#ifdef AFET_CUDA
-			cudaDeviceProp prop;
-			assert_cuda(cudaGetDeviceProperties(&prop, device_spec.device_id));
-			std::cout << "Selecting CUDA device: " << prop.name << std::endl;
-			assert_cuda(cudaSetDevice(device_spec.device_id));
-			assert_cuda(cudaFree(NULL));
-#else
-			throw std::runtime_error("Afet not compiled with CUDA support");
-#endif
-			break;
-		}
 		case Platform_OpenCL:
 		{
-#ifdef AFET_OPENCL
 			cl_uint nplatforms, ndevices;
 
 			clGetPlatformIDs(0, NULL, &nplatforms);
@@ -744,75 +698,22 @@ int main(int argc, char * argv[])
 			char name[128];
 			clGetDeviceInfo(cfg.opencl_device, CL_DEVICE_NAME, BUFFSIZE, name, NULL);
 			std::cout << "Selecting OpenCL device: " << name << std::endl;
-#else
-			throw std::runtime_error("Afet not compiled with OpenCL support");
-#endif
 			break;
 		}
 		}
 
-		std::vector<fs::path> input, output;
-		fs::path input_dir = input_dir_arg;
-		fs::path output_dir = output_dir_arg;
-		if (input_dir.empty())
-			input_dir = fs::current_path();
-		if (output_dir.empty())
-			output_dir = input_dir;
-
-		if (!scp_file.empty())
+		std::vector<string> input, output;
+		string input_dir = input_dir_arg;
+		string output_dir = output_dir_arg;
+	
+		if (wav_file.find('/'))
 		{
-			std::ifstream fin(scp_file.c_str());
-			if (fin)
-			{
-				for (std::string line; std::getline(fin, line);)
-					input.push_back(line);
-				fin.close();
-
-				for (std::vector<fs::path>::iterator it = input.begin(); it != input.end(); ++it)
-				{
-					if (it->is_absolute())
-					{
-						fs::path out = *it;
-						output.push_back(out.replace_extension(output_ext));
-					}
-					else
-					{
-						output.push_back((output_dir / *it).replace_extension(output_ext));
-						*it = input_dir / *it;
-					}
-				}
-			}
-			else
-			{
-				std::cerr << "Can't open SCP file \"" << scp_file << "\"\n";
-				return 2;
-			}
+			input.push_back(wav_file);
+			output.push_back(wav_file.substr(wav_file.begin, wav_file.length() - 4) + "_mfcc.txt");
 		}
-		else
-		{
-			if (fs::path(wav_file).is_absolute())
-			{
-				input.push_back(wav_file);
-				output.push_back(fs::path(wav_file).replace_extension(output_ext));
-			}
-			else
-			{
-				input.push_back(input_dir / wav_file);
-				output.push_back((output_dir / wav_file).replace_extension(output_ext));
-			}
-		}
-		StopWatch sw;
-		sw.start();
-
+		
 		process_files_mt(input, output, cfg, sample_limit, num_threads);
 
-		sw.stop();
-		std::cout << "Total processing time: " << sw.getTime() << " s\n";
-
-#ifdef AFET_CUDA
-		if (cfg.platform == Platform_CUDA)
-			assert_cuda(cudaDeviceReset());
-#endif
 	}
 	catch (const std::runtime_error & e)
 	{
