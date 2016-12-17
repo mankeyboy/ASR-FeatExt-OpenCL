@@ -210,7 +210,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 				{
 					fout = fopen(file_out_name.c_str(), cfg.text_output ? "w" : "wb");
 					if (fout == NULL)
-						throw std::runtime_error("Can't create output file: " + file_out_name.string());
+						throw std::runtime_error("Can't create output file: " + file_out_name);
 				}
 				vecfout.push_back(fout);
 				fidx++;
@@ -258,12 +258,8 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 								fprintf(fout, "\n");
 							}
 						}
-						else
-							write_htk_d(fout, (float *)data, data_out_width * windows_out);
-						if (debug_mode & AFET_DEBUG_FLUSH)
+						if (debug_mode)
 							fflush(fout);
-						if (benchmark)
-							sw.stop();
 					}
 				}
 				samples -= samples_in;
@@ -281,16 +277,12 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					param->get_output_data((float *)data, windows_out);
 					if (verbose)
 					{
-						global_stream_lock.lock();
 						std::cout << "\tFlushing: " << windows_out << " frames, alpha = " << alpha << std::endl;
-						global_stream_lock.unlock();
 					}
 
-					if (!(debug_mode & AFET_DEBUG_NOOUTPUT))
+					if (!(debug_mode))
 					{
 						FILE * fout = vecfout[fidx];
-						if (benchmark)
-							sw.start();
 						if (cfg.text_output)
 						{
 							for (int f = 0; f < windows_out; f++)
@@ -301,12 +293,8 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 								fprintf(fout, "\n");
 							}
 						}
-						else
-							write_htk_d(fout, (float *)data, data_out_width * windows_out);
-						if (debug_mode & AFET_DEBUG_FLUSH)
+						if (debug_mode)
 							fflush(fout);
-						if (benchmark)
-							sw.stop();
 					}
 				}
 			}
@@ -316,32 +304,21 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			}
 			if (verbose)
 			{
-				global_stream_lock.lock();
 				std::cout << "\tTotal frames processed per VTLN alpha: " << windows_total_in << "\n\tTotal frames processed: " << windows_total_out << std::endl;
-				global_stream_lock.unlock();
 			}
 
 			sf_close(f);
-			sw.start();
 			for (float alpha = cfg.alpha.min, fidx = 0; alpha <= cfg.alpha.max; alpha += cfg.alpha.step, fidx++)
 			{
 				FILE * fout = vecfout[fidx];
-				if (!(debug_mode & AFET_DEBUG_NOOUTPUT) && !cfg.text_output)
+				if (!(debug_mode) && !cfg.text_output)
 				{
 					fseek(fout, 0, SEEK_SET);
-					write_htk_header(fout, data_out_width, windows_total_in, cfg.shift * 10000, htk_param_kind);
 				}
 				fclose(fout);
 			}
-			sw.stop();
 		}
-		if (benchmark)
-		{
-			global_stream_lock.lock();
-			std::cout << "[Benchmark] File IO time:   " << sw.getTime() << " s\n";
-			global_stream_lock.unlock();
-		}
-
+		
 		delete[](char *)data;
 		delete param;
 	}
@@ -359,15 +336,15 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 	}
 }
 
-void process_files_mt(const std::vector<fs::path> & input, const std::vector<fs::path> & output, SConfig & cfg, int sample_limit, int num_threads)
+void process_files_mt(const std::vector<string> & input, const std::vector<string> & output, SConfig & cfg, int sample_limit, int num_threads)
 {
 	if (cfg.sample_rate <= 0)
 	{
 		if (verbose)
-			std::cout << "Sample rate not set, opening the first file: " << input.front().string() << "\n";
+			std::cout << "Sample rate not set, opening the first file: " << input.front() << "\n";
 		SF_INFO info;
 		info.format = 0;
-		SNDFILE * f = sf_open(input.front().string().c_str(), SFM_READ, &info);
+		SNDFILE * f = sf_open(input.front().c_str(), SFM_READ, &info);
 		sf_close(f);
 		if (f == NULL)
 		{
@@ -384,8 +361,6 @@ void process_files_mt(const std::vector<fs::path> & input, const std::vector<fs:
 	for (int fidx = 0; fidx < input.size(); fidx++)
 		files.push_back(SProcessedFile(input[fidx], output[fidx]));
 
-
-	boost::thread_group threads;
 	for (int i = 0; i < num_threads; i++)
 		threads.add_thread(new boost::thread(process_files_worker, &files, cfg, sample_limit, i, num_threads));
 	threads.join_all();
