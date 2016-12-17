@@ -164,9 +164,8 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			SProcessedFile file = files->front();
 			files->pop_front();
 			
-			const fs::path & file_in = file.input,
-				&file_out = file.output;
-			std::string input_file_name = file_in.generic_string();
+			const string & file_in = file.input, &file_out = file.output;
+			std::string input_file_name = file_in;
 			SF_INFO info;
 			info.format = 0;
 			SNDFILE * f = NULL;
@@ -197,7 +196,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			int fidx = 0;
 			for (float alpha = cfg.alpha.min; alpha <= cfg.alpha.max; alpha = cfg.alpha.min + fidx * cfg.alpha.step)
 			{
-				fs::path file_out_name;
+				string file_out_name;
 				if (cfg.alpha.max - cfg.alpha.min < cfg.alpha.step)
 					file_out_name = file_out;  //only 1 alpha
 				else
@@ -210,8 +209,6 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 					fout = fopen(file_out_name.string().c_str(), cfg.text_output ? "w" : "wb");
 					if (fout == NULL)
 						throw std::runtime_error("Can't create output file: " + file_out_name.string());
-					if (!cfg.text_output)
-						write_htk_header(fout, 0, 0, 0, 0); //Dummy header for correct data offset
 				}
 				vecfout.push_back(fout);
 				fidx++;
