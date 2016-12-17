@@ -4,7 +4,7 @@
 #include "CL\cl.h"
 #include "utils.h"
 #include "oclUtils.h"
-#include <shrQATest.h>
+#include "shrQATest.h"
 #include "oclDCT8x8_common.h"
 
 
