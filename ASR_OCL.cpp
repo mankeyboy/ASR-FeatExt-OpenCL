@@ -14,6 +14,7 @@
 #include <cstring>
 #include <string>
 #include <list>
+#include <sstream>
 
 #include "CL\cl.h"
 #include "utils.h"
@@ -441,11 +442,11 @@ std::istream & operator >> (std::istream & is, Platform_t & platform)
 {
 	std::string token;
 	is >> token;
-	if (token.compare("auto"))
+	if (token.compare("auto") == 0)
 		platform = Platform_Auto;
-	else if (token.compare("cpu"))
+	else if (token.compare("cpu") == 0)
 		platform = Platform_CPU;
-	else if (token.compare("opencl"))
+	else if (token.compare("opencl") == 0)
 		platform = Platform_OpenCL;
 	else
 		throw std::runtime_error("Unknown platform");
@@ -454,25 +455,22 @@ std::istream & operator >> (std::istream & is, Platform_t & platform)
 
 int str2clDeviceType(const std::string & t)
 {
-	if (boost::iequals(t, "default"))
+	if (t.compare("default") == 0)
 		return CL_DEVICE_TYPE_DEFAULT;
-	else if (boost::iequals(t, "cpu"))
+	else if (t.compare("cpu") == 0)
 		return CL_DEVICE_TYPE_CPU;
-	else if (boost::iequals(t, "gpu"))
+	else if (t.compare("gpu") == 0)
 		return CL_DEVICE_TYPE_GPU;
-	else if (boost::iequals(t, "accelerator"))
+	else if (t.compare("accelerator") == 0)
 		return CL_DEVICE_TYPE_ACCELERATOR;
 #ifdef CL_DEVICE_TYPE_CUSTOM
-	else if (boost::iequals(t, "custom"))
+	else if (t.compare("custom") == 0)
 		return CL_DEVICE_TYPE_CUSTOM;
 #endif
-	else if (boost::iequals(t, "all"))
+	else if (t.compare("all") == 0)
 		return CL_DEVICE_TYPE_ALL;
 	else
 		throw std::runtime_error("Unknown device type");
-#else
-	return 0;
-#endif
 }
 
 std::istream & operator >> (std::istream & is, SDevice & dev)
