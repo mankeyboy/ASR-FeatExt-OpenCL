@@ -44,6 +44,7 @@ int main_DCT(int argc, char **argv)
         for(uint i = 0; i < imageH; i++)
             for(uint j = 0; j < imageW; j++)
                 h_Input[i * stride + j] = (float)rand() / (float)RAND_MAX;
+		 
 
     shrLog("Initializing OpenCL...\n");
         //Get the NVIDIA platform

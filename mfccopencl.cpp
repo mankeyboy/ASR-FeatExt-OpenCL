@@ -160,7 +160,7 @@ MfccOpenCL::MfccOpenCL(int input_buffer_size,
 	if (m_ceps_len > 0)
 	{
 		d_mfcc = clCreateBuffer(context, CL_MEM_READ_WRITE, m_dct_len2 * m_window_limit * sizeof(float), NULL, NULL);
-		d_dct_matrix = clCreateBuffer(context, CL_MEM_READ_ONLY, m_dct_len2 * m_num_banks2 * sizeof(float), NULL, NULL);
+		d_dct_matrix = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, m_dct_len2 * m_num_banks2 * sizeof(float), NULL, NULL);
 
 		float * dct_matrix = new float [m_dct_len2 * m_num_banks2];
 		memset(dct_matrix, 0, m_num_banks2 * m_dct_len2 * sizeof(float));
