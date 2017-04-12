@@ -561,8 +561,7 @@ int main(int argc, char * argv[])
 	SDevice device_spec;
 	int sample_limit = 10000000,
 		num_threads = 1;
-	std::string input_dir_arg, output_dir_arg, scp_file, config_file;
-	vector<string> wav_file;
+	std::string input_dir_arg, output_dir_arg, scp_file, wav_file, config_file;
 	benchmark = false;
 	debug_mode = 0;
 /*
@@ -735,13 +734,21 @@ int main(int argc, char * argv[])
 		{
 			output.push_back(wav_file[i].substr(0, wav_file[i].length() - 4) + "_mfcc.txt");
 		}*/
-		int maxlen = 100000;
+		/*int maxlen = 10000;
 		char * buffer = NULL;
-		_getcwd(buffer, maxlen);
-		string addition = "/soundfiles/a001.wav";
-		wav_file.push_back(buffer + addition);
+		_getcwd(buffer, maxlen);*/
+		string addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a1.wav";
+		input.push_back(addition);
+		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a2.wav";
+		input.push_back(addition);
+		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a3.wav";
+		input.push_back(addition);
+		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a4.wav";
+		input.push_back(addition);
+		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a5.wav";
+
 		
-		process_files_mt(wav_file, output, cfg, sample_limit, num_threads);
+		process_files_mt(input, output, cfg, sample_limit, num_threads);
 
 	}
 	catch (const std::runtime_error & e)
