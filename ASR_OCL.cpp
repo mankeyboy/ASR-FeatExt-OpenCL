@@ -722,19 +722,24 @@ int main(int argc, char * argv[])
 		std::vector<string> input, output;
 		string input_dir = input_dir_arg;
 		string output_dir = output_dir_arg;
-		int maxlen = 100000;
+		/*int maxlen = 100000;
 		char * buffer = NULL;
 		_getcwd(buffer, maxlen);
 		string inputFolderPath(buffer);
 		inputFolderPath += "soundfiles";
 		string extension = ".wav";
 		getFilesList(inputFolderPath, extension, wav_file);
-	
-		for (int i = 0; i < wav_file.size(); i++)
+	*/
+		/*for (int i = 0; i < wav_file.size(); i++)
 		if (wav_file[i].find('/'))
 		{
 			output.push_back(wav_file[i].substr(0, wav_file[i].length() - 4) + "_mfcc.txt");
-		}
+		}*/
+		int maxlen = 100000;
+		char * buffer = NULL;
+		_getcwd(buffer, maxlen);
+		string addition = "/soundfiles/a001.wav";
+		wav_file.push_back(buffer + addition);
 		
 		process_files_mt(wav_file, output, cfg, sample_limit, num_threads);
 
