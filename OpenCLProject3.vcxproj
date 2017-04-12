@@ -29,7 +29,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E99F5DFC-113A-4BC3-8253-90A6AC0C9A9D}</ProjectGuid>
+    <ProjectGuid>{42C79037-E54E-4B32-BB96-6C2BD2125ADA}</ProjectGuid>
     <RootNamespace>OpenCLProject3</RootNamespace>
     <ProjectName>ASR_OCL</ProjectName>
   </PropertyGroup>
@@ -82,7 +82,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\include;C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\DCT_support\inc;C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\DCT_support\src;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\Debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -116,7 +116,7 @@
       <Device>1</Device>
     </Intel_OpenCL_Build_Rules>
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\include;$(INTELOCLSDKROOT)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\include;$(INTELOCLSDKROOT)include;C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\DCT_support\inc;C:\Users\Mayank\Documents\Visual Studio 2015\Projects\OpenCLProject3\OpenCLProject3\DCT_support\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>Win32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -189,6 +189,12 @@
     <ClCompile Include="benchmark.cpp" />
     <ClCompile Include="clfft.cpp" />
     <ClCompile Include="clmemset.cpp" />
+    <ClCompile Include="DCT_support\src\cmd_arg_reader.cpp" />
+    <ClCompile Include="DCT_support\src\main.cpp" />
+    <ClCompile Include="DCT_support\src\oclDCT8x8_gold.cpp" />
+    <ClCompile Include="DCT_support\src\oclDCT8x8_launcher.cpp" />
+    <ClCompile Include="DCT_support\src\oclUtils.cpp" />
+    <ClCompile Include="DCT_support\src\shrUtils.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="deltacpu.cpp" />
     <ClCompile Include="deltaopencl.cpp" />
@@ -198,9 +204,6 @@
     <ClCompile Include="mfccopencl.cpp" />
     <ClCompile Include="normalizercpu.cpp" />
     <ClCompile Include="normalizeropencl.cpp" />
-    <ClCompile Include="oclDCT8x8_gold.cpp" />
-    <ClCompile Include="oclDCT8x8_launcher.cpp" />
-    <ClCompile Include="oclUtils.cpp" />
     <ClCompile Include="parambase.cpp" />
     <ClCompile Include="segmentercpu.cpp" />
     <ClCompile Include="segmenteropencl.cpp" />
@@ -213,6 +216,20 @@
     <ClInclude Include="benchmark.h" />
     <ClInclude Include="clfft.h" />
     <ClInclude Include="clmemset.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d10.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d10_ext.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d11_ext.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d9_ext.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_ext.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_gl.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_gl_ext.h" />
+    <ClInclude Include="DCT_support\inc\CL\cl_platform.h" />
+    <ClInclude Include="DCT_support\inc\cmd_arg_reader.h" />
+    <ClInclude Include="DCT_support\inc\exception.h" />
+    <ClInclude Include="DCT_support\inc\oclDCT8x8_common.h" />
+    <ClInclude Include="DCT_support\inc\oclUtils.h" />
+    <ClInclude Include="DCT_support\inc\shrQATest.h" />
+    <ClInclude Include="DCT_support\inc\shrUtils.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="deltacpu.h" />
     <ClInclude Include="deltaopencl.h" />
@@ -222,15 +239,11 @@
     <ClInclude Include="normalizer.h" />
     <ClInclude Include="normalizercpu.h" />
     <ClInclude Include="normalizeropencl.h" />
-    <ClInclude Include="oclDCT8x8_common.h" />
-    <ClInclude Include="oclUtils.h" />
     <ClInclude Include="openclkernelloader.h" />
     <ClInclude Include="parambase.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="segmentercpu.h" />
     <ClInclude Include="segmenteropencl.h" />
-    <ClInclude Include="shrQATest.h" />
-    <ClInclude Include="shrUtils.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

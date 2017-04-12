@@ -13,7 +13,7 @@
 // Utilities specific to OpenCL samples in NVIDIA GPU Computing SDK 
 // *********************************************************************
 
-#include "oclUtils.h"
+#include <oclUtils.h>
 #include <fstream>
 #include <vector>
 #include <iostream>

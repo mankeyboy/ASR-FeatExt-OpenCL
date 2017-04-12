@@ -75,19 +75,28 @@
     <ClCompile Include="AppleFFT\fft_setup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="oclDCT8x8_gold.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="oclDCT8x8_launcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main_DCT_example.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="oclUtils.cpp">
+    <ClCompile Include="debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug.cpp">
+    <ClCompile Include="DCT_support\src\cmd_arg_reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCT_support\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCT_support\src\oclDCT8x8_gold.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCT_support\src\oclDCT8x8_launcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCT_support\src\oclUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCT_support\src\shrUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,19 +161,49 @@
     <ClInclude Include="AppleFFT\fft_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="oclDCT8x8_common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="oclUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shrQATest.h">
+    <ClInclude Include="DCT_support\inc\cmd_arg_reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shrUtils.h">
+    <ClInclude Include="DCT_support\inc\exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d9_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d10.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d10_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_d3d11_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_gl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_gl_ext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\CL\cl_platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\oclDCT8x8_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\oclUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\shrQATest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCT_support\inc\shrUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

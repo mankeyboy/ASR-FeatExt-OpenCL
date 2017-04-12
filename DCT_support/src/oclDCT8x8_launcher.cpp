@@ -1,4 +1,15 @@
-#include "oclUtils.h"
+/*
+ * Copyright 1993-2010 NVIDIA Corporation.  All rights reserved.
+ *
+ * Please refer to the NVIDIA end user license agreement (EULA) associated
+ * with this source code for terms and conditions that govern your use of
+ * this software. Any use, reproduction, disclosure, or distribution of
+ * this software and related documentation outside the terms of the EULA
+ * is strictly prohibited.
+ *
+ */
+
+#include <oclUtils.h>
 #include "oclDCT8x8_common.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +31,7 @@ extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamComm
     size_t kernelLength;
 
     shrLog("Loading OpenCL DCT8x8...\n");
-        char *cPathAndName = shrFindFilePath("DCT8x8.cl", argv[0]);
+        char *cPathAndName = shrFindFilePath("DCT.cl", argv[0]);
         shrCheckError(cPathAndName != NULL, shrTRUE);
         char *cDCT8x8 = oclLoadProgSource(cPathAndName, "// My comment\n", &kernelLength);
         shrCheckError(cDCT8x8 != NULL, shrTRUE);

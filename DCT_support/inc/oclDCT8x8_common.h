@@ -12,7 +12,7 @@
 #ifndef OCLDCT8x8_COMMON_H
 #define OCLDCT8x8_COMMON_H
 
-#include "oclUtils.h"
+#include <oclUtils.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Common definitions
