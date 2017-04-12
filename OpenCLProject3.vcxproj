@@ -198,7 +198,6 @@
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="deltacpu.cpp" />
     <ClCompile Include="deltaopencl.cpp" />
-    <ClCompile Include="main_DCT_example.cpp" />
     <ClCompile Include="mfccbase.cpp" />
     <ClCompile Include="mfcccpu.cpp" />
     <ClCompile Include="mfccopencl.cpp" />
