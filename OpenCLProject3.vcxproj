@@ -29,7 +29,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{42C79037-E54E-4B32-BB96-6C2BD2125ADA}</ProjectGuid>
+    <ProjectGuid>{E99F5DFC-113A-4BC3-8253-90A6AC0C9A9D}</ProjectGuid>
     <RootNamespace>OpenCLProject3</RootNamespace>
     <ProjectName>ASR_OCL</ProjectName>
   </PropertyGroup>
@@ -190,7 +190,6 @@
     <ClCompile Include="clfft.cpp" />
     <ClCompile Include="clmemset.cpp" />
     <ClCompile Include="DCT_support\src\cmd_arg_reader.cpp" />
-    <ClCompile Include="DCT_support\src\main.cpp" />
     <ClCompile Include="DCT_support\src\oclDCT8x8_gold.cpp" />
     <ClCompile Include="DCT_support\src\oclDCT8x8_launcher.cpp" />
     <ClCompile Include="DCT_support\src\oclUtils.cpp" />

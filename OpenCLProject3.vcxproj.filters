@@ -81,9 +81,6 @@
     <ClCompile Include="DCT_support\src\cmd_arg_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DCT_support\src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DCT_support\src\oclDCT8x8_gold.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
