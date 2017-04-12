@@ -10,6 +10,9 @@
 #include "mfccopencl.h"
 #include "openclkernelloader.h"
 #include "clmemset.h"
+#include <oclUtils.h>
+#include <shrQATest.h>
+#include <oclDCT8x8_common.h>
 
 static int MAX_BLOCK_SIZE = 256,
 	SUM_GRID_SIZE = 256,
@@ -254,6 +257,9 @@ MfccOpenCL::MfccOpenCL(int input_buffer_size,
 	clSetKernelArg(kernel_filter, 9, sizeof(cl_float), &param_float);
 
 	refresh_filters();
+
+	initDCT8x8(context, cmd_queue);
+
 }
 
 MfccOpenCL::~MfccOpenCL()
@@ -332,14 +338,23 @@ void MfccOpenCL::dct(int window_count)
 		1, &cmd_queue, 0, NULL, NULL);
 	if (status != clAmdBlasSuccess)
 		throw std::runtime_error("Error while computing DCT");*/
-	for (int i = 0; i < window_count; i++)
+	DCT8x8(
+		cmd_queue,
+		d_dct_matrix,
+		d_mfcc,
+		m_num_banks2,
+		m_dct_len2,
+		window_count,
+		DCT_FORWARD
+	);
+	/*for (int i = 0; i < window_count; i++)
 	for (int j = 0; j < m_dct_len2; j++)
 	{
 		float sum = 0;
 		for (int k = 0; k < m_num_banks2; k++)
 			sum += m_mel_energies[m_num_banks2 * i + k] * m_dct_matrix[m_dct_len * k + j];
 		m_mfcc[m_dct_len2 * i + j] = sum;
-	}
+	}*/
 }
 
 void MfccOpenCL::do_delta(int window_count, bool first_call, bool last_call)

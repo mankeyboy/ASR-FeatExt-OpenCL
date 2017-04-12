@@ -70,7 +70,7 @@ int main(int argc, char **argv)
         oclCheckError(ciErrNum, CL_SUCCESS);
 
     shrLog("Initializing OpenCL DCT 8x8...\n");
-        initDCT8x8(cxGPUContext, cqCommandQueue, (const char **)argv);
+        initDCT8x8(cxGPUContext, cqCommandQueue);
 
     shrLog("Creating OpenCL memory objects...\n");
         d_Input = clCreateBuffer(cxGPUContext, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, imageH * stride *  sizeof(cl_float), h_Input, &ciErrNum);

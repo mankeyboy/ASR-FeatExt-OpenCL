@@ -30,7 +30,7 @@ extern "C" void DCT8x8CPU(float *dst, float *src, uint stride, uint imageH, uint
 ////////////////////////////////////////////////////////////////////////////////
 // OpenCL 8x8 (i)DCT
 ////////////////////////////////////////////////////////////////////////////////
-extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamCommandQue, const char **argv);
+extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamCommandQue);
 extern "C" void closeDCT8x8(void);
 extern "C" void DCT8x8(
     cl_command_queue cqCommandQueue,

@@ -11,6 +11,7 @@
 
 #include <oclUtils.h>
 #include "oclDCT8x8_common.h"
+#include <direct.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // OpenCL launcher for DCT8x8 / IDCT8x8 kernels
@@ -26,12 +27,15 @@ static cl_kernel
 //Default command queue for DCT8x8 kernels
 static cl_command_queue cqDefaultCommandQue;
 
-extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamCommandQue, const char **argv){
+extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamCommandQue){
     cl_int ciErrNum;
     size_t kernelLength;
+	int maxlen = 10000;
+	char * buffer;
+	_getcwd(buffer,maxlen);
 
     shrLog("Loading OpenCL DCT8x8...\n");
-        char *cPathAndName = shrFindFilePath("DCT.cl", argv[0]);
+        char *cPathAndName = shrFindFilePath("DCT.cl", buffer);
         shrCheckError(cPathAndName != NULL, shrTRUE);
         char *cDCT8x8 = oclLoadProgSource(cPathAndName, "// My comment\n", &kernelLength);
         shrCheckError(cDCT8x8 != NULL, shrTRUE);
