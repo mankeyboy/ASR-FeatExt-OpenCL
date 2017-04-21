@@ -38,6 +38,6 @@ public:
 
     int estimated_window_count(int samples) const
     {
-        return floor(float(samples - (m_window_size - m_shift)) / m_shift);
+        return (int)floor(float(samples - (m_window_size - m_shift)) / m_shift);
     }
 };

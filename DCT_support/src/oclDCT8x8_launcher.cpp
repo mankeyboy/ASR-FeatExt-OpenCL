@@ -41,7 +41,7 @@ extern "C" void initDCT8x8(cl_context cxGPUContext, cl_command_queue cqParamComm
         shrCheckError(cDCT8x8 != NULL, shrTRUE);
 
     shrLog("Creating DCT8x8 program...\n");
-        cpDCT8x8 = clCreateProgramWithSource(cxGPUContext, 0, (const char **)&cDCT8x8, &kernelLength, &ciErrNum);
+        cpDCT8x8 = clCreateProgramWithSource(cxGPUContext, 2, (const char **)&cDCT8x8, &kernelLength, &ciErrNum);
         shrCheckError (ciErrNum, CL_SUCCESS);
 
     shrLog("Building DCT8x8 program...\n");

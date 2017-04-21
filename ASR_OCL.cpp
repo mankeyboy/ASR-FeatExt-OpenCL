@@ -112,8 +112,8 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 	void * data = NULL;
 	try
 	{
-		int window_size = cfg.sample_rate * cfg.window_size * 1e-3,
-			shift = cfg.sample_rate * cfg.shift * 1e-3;
+		long int window_size = (long)cfg.sample_rate * cfg.window_size * 1e-3,
+			shift = (long)cfg.sample_rate * cfg.shift * 1e-3;
 
 		Normalizer::norm_t norm_type = Normalizer::NORM_NONE;
 		ParamBase::dyn_t dyn_type = ParamBase::DYN_NONE;
@@ -148,7 +148,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			throw std::runtime_error("Unsupported platform");
 		float * window = new float[window_size];
 		for (int i = 0; i < window_size; i++)
-			window[i] = (0.56f - 0.46f * cos((2.0f * M_PI * i) / window_size)) / 32768.f;
+			window[i] = (float)(0.56f - 0.46f * cos((2.0f * M_PI * i) / window_size)) / 32768.f;
 		param->set_window(window);
 		delete[] window;
 		
@@ -217,7 +217,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 				fidx++;
 			}
 
-			int samples = info.frames;
+			int samples = (int)info.frames;
 			int windows_total_in = 0,
 				windows_total_out = 0,
 				windows_out,
@@ -311,7 +311,7 @@ void process_files_worker(std::list<SProcessedFile> * files, SConfig & cfg, int 
 			sf_close(f);
 			for (float alpha = cfg.alpha.min, fidx = 0; alpha <= cfg.alpha.max; alpha += cfg.alpha.step, fidx++)
 			{
-				FILE * fout = vecfout[fidx];
+				FILE * fout = vecfout[(int)fidx];
 				if (!(debug_mode) && !cfg.text_output)
 				{
 					fseek(fout, 0, SEEK_SET);
@@ -564,6 +564,7 @@ int main(int argc, char * argv[])
 	std::string input_dir_arg, output_dir_arg, scp_file, wav_file, config_file;
 	benchmark = false;
 	debug_mode = 0;
+	std::cout << "In main" << endl;
 /*
 	po::options_description prog_desc("Program options");
 	prog_desc.add_options()
@@ -676,15 +677,15 @@ int main(int argc, char * argv[])
 		case Platform_OpenCL:
 		{
 			cl_uint nplatforms, ndevices;
-
+			std::cout << "Hiya Ho OpenCL" << endl;
 			clGetPlatformIDs(0, NULL, &nplatforms);
 			if (nplatforms <= device_spec.platform_id)
 				throw std::runtime_error("Invalid OpenCL platform ID");
 			cl_platform_id * platform_ids = (cl_platform_id *)malloc(nplatforms * sizeof(cl_platform_id));
 			clGetPlatformIDs(nplatforms, platform_ids, NULL);
 
-			int platform_id = 0,
-				nonempty_platforms = 0;
+			int platform_id = 0, nonempty_platforms = 0;
+			std::cout << "Who goes there: 1\n";
 			for (;; platform_id++)
 			{
 				if (platform_id >= nplatforms)
@@ -694,12 +695,14 @@ int main(int argc, char * argv[])
 					continue;
 				else if (ret == CL_SUCCESS)
 				{
+					std::cout << "Who goes there: 1 If condition ret success: "<< device_spec.platform_id << endl;
 					if (device_spec.platform_id == nonempty_platforms++)
 						break;
 				}
 				else
 					throw std::runtime_error("Can't get OpenCL device list");
 			}
+			std::cout << "Who goes there: ndevices" << ndevices <<" <= " << device_spec.device_id << endl;
 			if (ndevices <= device_spec.device_id)
 			{
 				free(platform_ids);
@@ -707,7 +710,8 @@ int main(int argc, char * argv[])
 			}
 			cl_device_id * device_ids = (cl_device_id *)malloc(ndevices * sizeof(cl_device_id));
 			clGetDeviceIDs(platform_ids[platform_id], device_spec.cl_device_type, ndevices, device_ids, NULL);
-
+			for (int i = 0; i < ndevices; i++)
+				std::cout << "Device ID" << i << ": "<<device_spec.device_id<< endl;
 			cfg.opencl_device = device_ids[device_spec.device_id];
 
 			const int BUFFSIZE = 128;
@@ -737,15 +741,15 @@ int main(int argc, char * argv[])
 		/*int maxlen = 10000;
 		char * buffer = NULL;
 		_getcwd(buffer, maxlen);*/
-		string addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a1.wav";
+		string addition = "soundfiles/a1.wav";
 		input.push_back(addition);
-		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a2.wav";
+		addition = "soundfiles/a2.wav";
 		input.push_back(addition);
-		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a3.wav";
+		addition = "soundfiles/a3.wav";
 		input.push_back(addition);
-		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a4.wav";
+		addition = "soundfiles/a4.wav";
 		input.push_back(addition);
-		addition = "C:/Users/Mayank/Documents/Visual\ Studio\ 2015/Projects/OpenCLProject3/OpenCLProject3/soundfiles/a5.wav";
+		addition = "soundfiles/a5.wav";
 
 		
 		process_files_mt(input, output, cfg, sample_limit, num_threads);
