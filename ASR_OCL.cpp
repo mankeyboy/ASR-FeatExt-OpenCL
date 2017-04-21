@@ -59,8 +59,8 @@ enum Method_t
 enum Platform_t
 {
 	Platform_Auto,
-	Platform_CPU,
-	Platform_OpenCL
+	Platform_OpenCL,
+	Platform_CPU
 };
 
 struct SDevice
@@ -559,6 +559,7 @@ int main(int argc, char * argv[])
 {
 	SConfig cfg = { Method_MFCC, Platform_Auto, SVTLNAlpha(1), 25, 10, 15, 12, 2, 0, 3, 3, 31, 10, 8, 0, 64, 0, 22, true, true, true, 0 };
 	SDevice device_spec;
+	printOpenCLDevices();
 	int sample_limit = 10000000,
 		num_threads = 1;
 	std::string input_dir_arg, output_dir_arg, scp_file, wav_file, config_file;
